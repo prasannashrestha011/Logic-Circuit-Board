@@ -126,19 +126,19 @@ const GatePage = () => {
     //@@ if lies on certain port, it will create new connection {selectedPort,targeted port} and push to the connection array
     const onTouchUp=(point:Point)=>{
       if(!canvasRef.current || !selectedPort) return 
-      const canvas=canvasRef.current
-      const ctx=canvas.getContext('2d')
-      if(!ctx) return 
       
+      setIsDrawing(false)
+     
+   
       const targetedPort=findPortAtPoint(point)  
       if(targetedPort && selectedPort){
      
-        if(selectedPort.id===targetedPort.id) return  // dont allow user to make same port select and target
-        console.log(selectedPort.id,targetedPort.id)
-        if(targetedPort.type===selectedPort.type) return  // to avoid connecting port of same type ,input1 != input2
-        
-
-        //@to sync the gate input port with input port I have assigned the initial input port value to the targeted gate input port
+        const isValidConnection = 
+        selectedPort.id !== targetedPort.id && // Different ports
+        selectedPort.type !== targetedPort.type && // Different port types
+        !(selectedPort.type === "input" && targetedPort.type === "output"); // Correct direction
+        if(isValidConnection){
+          //@to sync the gate input port with input port I have assigned the initial input port value to the targeted gate input port
         const updatedTargetport={...targetedPort,value:selectedPort.value} 
         
         console.log("Your targeted port ",updatedTargetport)
@@ -154,12 +154,15 @@ const GatePage = () => {
               end:updatedTargetport
             }
           ])
+        }
+
+        
       }
 
      
-     
-      setSelectedPort(null)
       drawCanvasHandler()
+      setSelectedPort(null)
+   
     }
 
 
@@ -228,7 +231,7 @@ const GatePage = () => {
     useEffect(()=>{
       drawCanvasHandler()
       
-    },[ports,connections])
+    },[ports,connections,selectedPort])
     useEffect(()=>{
       handleResize()
     },[])

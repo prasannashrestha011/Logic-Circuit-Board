@@ -23,14 +23,29 @@ import { connection, Gate, Point, Port } from "./types"
         ctx.stroke();
         gates.forEach(gate=>{
 
-            ctx.fillStyle = 'blue';
+           
   
-        
+            if(gate.type=='and'){
+              ctx.fillStyle = 'blue'; 
             ctx.lineWidth = 2;
             ctx.beginPath();
             ctx.rect(gate.position.x, gate.position.y - gate.height/2, gate.width, gate.height);
             ctx.fill();
-          
+            }
+          if(gate.type=="or"){
+            ctx.fillStyle = 'orange'; 
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.rect(gate.position.x, gate.position.y - gate.height/2, gate.width, gate.height);
+            ctx.fill();
+          }
+          if(gate.type=="not"){
+            ctx.fillStyle = 'pink'; 
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.rect(gate.position.x, gate.position.y - gate.height/2, gate.width, gate.height);
+            ctx.fill();
+          }
 
           gate.inputs.forEach(port=>{
             ctx.beginPath()
