@@ -1,5 +1,6 @@
 
 import { connection, Gate, Point, Port } from "./types"
+import { DrawAndGate } from "./utils/drawGates"
 
  export const drawCanvas=(canvas:HTMLCanvasElement,portInputs:Port[],gates:Gate[],connections:connection[])=>{
    
@@ -26,18 +27,12 @@ import { connection, Gate, Point, Port } from "./types"
            
   
             if(gate.type=='and'){
-              ctx.fillStyle = 'blue'; 
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.rect(gate.position.x, gate.position.y - gate.height/2, gate.width, gate.height);
-            ctx.fill();
+             DrawAndGate(ctx,gate)
             }
           if(gate.type=="or"){
-            ctx.fillStyle = 'orange'; 
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.rect(gate.position.x, gate.position.y - gate.height/2, gate.width, gate.height);
-            ctx.fill();
+           
+            ctx.beginPath()
+           
           }
           if(gate.type=="not"){
             ctx.fillStyle = 'pink'; 
