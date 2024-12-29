@@ -1,6 +1,6 @@
 
 import { connection, Gate, Point, Port } from "./types"
-import { DrawAndGate } from "./utils/drawGates"
+import { DrawAndGate, DrawORgate } from "./utils/drawGates"
 
  export const drawCanvas=(canvas:HTMLCanvasElement,portInputs:Port[],gates:Gate[],connections:connection[])=>{
    
@@ -31,7 +31,7 @@ import { DrawAndGate } from "./utils/drawGates"
             }
           if(gate.type=="or"){
            
-            ctx.beginPath()
+            DrawORgate(ctx,gate)
            
           }
           if(gate.type=="not"){
