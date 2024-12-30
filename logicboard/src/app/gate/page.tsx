@@ -200,7 +200,26 @@ const GatePage = () => {
                 return connections.some(conn=>conn.start.id===clickedPort.id && conn.end.id===port.id)?{...port,value:newValue}:port
              })
              const outputValue=computeGateOutput(gate.type,updatedTargetInputs)
-       
+            
+             connections.forEach((conn) => {
+              if (conn.start.id === gate.output.id) {
+                const targetGate = gates.find((g) =>
+                  g.inputs.some((p) => p.id === conn.end.id)
+                );
+                if (targetGate) {
+                  targetGate.inputs = targetGate.inputs.map((p) =>
+                    p.id === conn.end.id
+                      ? { ...p, value: outputValue }
+                      : p
+                  );
+                  targetGate.output.value = computeGateOutput(
+                    targetGate.type,
+                    targetGate.inputs
+                  );
+                }
+              }
+            });
+            console.log("updated connection gxxr",connections)
              return {
               ...gate,
               inputs:updatedTargetInputs,
