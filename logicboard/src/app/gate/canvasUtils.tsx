@@ -1,8 +1,8 @@
 
 import { connection, Gate, Point, Port } from "./types"
-import { DrawAndGate, DrawORgate } from "./utils/drawGates"
+import { DrawAndGate, DrawNotGate, DrawORgate } from "./utils/drawGates"
 
- export const drawCanvas=(canvas:HTMLCanvasElement,portInputs:Port[],gates:Gate[],connections:connection[])=>{
+ export const drawCanvas=(canvas:HTMLCanvasElement,portInputs:Port[],outputPorts:Port[],gates:Gate[],connections:connection[])=>{
    
 
         const ctx=canvas.getContext('2d')
@@ -19,6 +19,15 @@ import { DrawAndGate, DrawORgate } from "./utils/drawGates"
             ctx.fill()
         })
 
+        //### for output ports ###
+        outputPorts.forEach(port=>{
+        
+          ctx.beginPath()
+          const {x,y}=port.position
+          ctx.arc(x,y,port.radius,0,Math.PI*2)
+          ctx.fillStyle=port.value?"orange":"black"
+          ctx.fill()
+      })
         // ### for logic gate ###
       
         ctx.stroke();
@@ -35,18 +44,14 @@ import { DrawAndGate, DrawORgate } from "./utils/drawGates"
            
           }
           if(gate.type=="not"){
-            ctx.fillStyle = 'pink'; 
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.rect(gate.position.x, gate.position.y - gate.height/2, gate.width, gate.height);
-            ctx.fill();
+            DrawNotGate(ctx,gate)
           }
 
           gate.inputs.forEach(port=>{
             ctx.beginPath()
             const {x,y}=port.position
             ctx.arc(x,y,port.radius,0,Math.PI*2)
-            ctx.fillStyle="red" // ## will be changed on output
+            ctx.fillStyle="orange" 
             ctx.fill()
            })
            ctx.beginPath()

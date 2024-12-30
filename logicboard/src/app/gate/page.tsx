@@ -12,7 +12,8 @@ const GatePage = () => {
   const [canvasResolution,setCanvasResolution]=useState<Res>()
     const canvasRef=useRef<HTMLCanvasElement>(null)
     const [isDrawing,setIsDrawing]=useState<boolean>(false)
-    const [ports,setPorts]=useState<Port[]>(portInputs)
+    const [inputPorts,setInputPorts]=useState<Port[]>(portInputs)
+    const [outputPorts,setOutputPorts]=useState<Port[]>([])
     const [gates,setGates]=useState<Gate[]>(Gates)
     const  [connections,setConnections]=useState<connection[]>([])
 
@@ -24,11 +25,17 @@ const GatePage = () => {
     }
     //####for getting the ports from mouse/touch down and up event###
     const findPortAtPoint=(point:Point):Port | null=>{
-      const clickedPort=ports.find(port=>{
+      const clickedInputPort=inputPorts.find(port=>{
         const distance=calDistance(port,point)
          return distance<=port.radius
       })
-      if(clickedPort) return clickedPort
+      if(clickedInputPort) return clickedInputPort
+      
+      const clickedOutputPort=outputPorts.find(port=>{
+        const distance=calDistance(port,point)
+        return distance<=port.radius
+      })
+      if(clickedOutputPort) return clickedOutputPort
       for(const gate of  gates){
          const targetedGatePort=gate.inputs.find(port=>{
            const distance=calDistance(port,point) 
@@ -132,7 +139,7 @@ const GatePage = () => {
    
       const targetedPort=findPortAtPoint(point)  
       if(targetedPort && selectedPort){
-     
+ 
       const isValidConnection = 
       selectedPort.id !== targetedPort.id && // Different ports
       selectedPort.type !== targetedPort.type && // Different port types
@@ -141,12 +148,12 @@ const GatePage = () => {
           //@to sync the gate input port with input port I have assigned the initial input port value to the targeted gate input port
         const updatedTargetport={...targetedPort,value:selectedPort.value} 
         
-        console.log("Your targeted port ",updatedTargetport)
+   
         
         setGates(prevGate=>updateGates(prevGate,targetedPort,selectedPort))
         
         //@@ sets connections
-        console.log("Updated port",updatedTargetport)
+      
           setConnections([
             ...connections,
             {
@@ -185,9 +192,10 @@ const GatePage = () => {
       if(!clickedPort) return 
 
       const newValue=!clickedPort.value
+      console.log("clicked port ",clickedPort)
       if(clickedPort.type==="input"){
   
-        setPorts(prevPort=>{
+        setInputPorts(prevPort=>{
           return prevPort.map(port=>{
             return port.id===clickedPort.id?{...port,value:newValue}:port
           })
@@ -199,8 +207,9 @@ const GatePage = () => {
              const updatedTargetInputs=gate.inputs.map(port=>{
                 return connections.some(conn=>conn.start.id===clickedPort.id && conn.end.id===port.id)?{...port,value:newValue}:port
              })
-             const outputValue=computeGateOutput(gate.type,updatedTargetInputs)
-            
+             const outputValue=computeGateOutput(gate.type,updatedTargetInputs)            
+
+             //@@ for handling the output as input for another logic operation@@
              connections.forEach((conn) => {
               if (conn.start.id === gate.output.id) {
                 const targetGate = gates.find((g) =>
@@ -219,7 +228,7 @@ const GatePage = () => {
                 }
               }
             });
-            console.log("updated connection gxxr",connections)
+        
              return {
               ...gate,
               inputs:updatedTargetInputs,
@@ -243,21 +252,22 @@ const GatePage = () => {
         if(!canvasRef.current) return 
         const canvas=canvasRef.current
 
-        drawCanvas(canvas,ports,gates,connections)
+        drawCanvas(canvas,inputPorts,outputPorts,gates,connections)
     }
 
 
     useEffect(()=>{
       drawCanvasHandler()
-      
-    },[ports,connections,selectedPort])
+     
+    },[inputPorts,connections,selectedPort])
     useEffect(()=>{
       handleResize()
     },[])
     useEffect(() => {
       if (canvasResolution) {
-        const { adjustedPorts, adjustedGates } = adjustPositions(canvasResolution.width, canvasResolution.height)
-        setPorts(adjustedPorts)
+        const { adjustedPorts, adjustedGates,adjustedOutPutPorts } = adjustPositions(canvasResolution.width, canvasResolution.height)
+        setInputPorts(adjustedPorts)
+        setOutputPorts(adjustedOutPutPorts)
         setGates(adjustedGates)
       }
     }, [canvasResolution])

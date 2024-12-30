@@ -11,7 +11,12 @@ import { Gate, Port } from "../types";
           console.log("or gate inputs",inputValues)
           return inputValues[0] != null && inputValues[1] != null && (inputValues[0] || inputValues[1]);
          }
-
+         case 'not':
+          if(inputValues[0]!=null){
+            console.log("not condition")
+            console.log(!inputValues)
+            return !inputValues[0]
+          } 
         default:
           return null;
       }

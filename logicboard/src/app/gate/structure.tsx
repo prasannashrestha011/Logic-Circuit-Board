@@ -4,7 +4,8 @@ export const portInputs:Port[]=[
     {id:'port-input-1',position:{x:20,y:60},radius:10,type:'input',value:false},
     {id:'port-input-2',position:{x:20,y:100},radius:10,type:'input',value:false},
     {id:'port-input-3',position:{x:20,y:140},radius:10,type:'input',value:false},
-    {id:'port-input-4',position:{x:20,y:180},radius:10,type:'input',value:false}
+    {id:'port-input-4',position:{x:20,y:180},radius:10,type:'input',value:false},
+
 ]
 
 
@@ -37,11 +38,11 @@ export const Gates:Gate[]=[
 ]
 // utils/calculatePositions.ts
 export const adjustPositions = (width: number, height: number, numRows: number = 3, numColumns: number = 4) => {
- // Constants for port radius and spacing
+
  const INPUT_RADIUS = 9;
  const GAP = height * 0.11;  // Gap between ports (adjust this value as needed)
 
- // Dynamically generate 6 input ports with equal spacing
+
  const adjustedPorts = Array.from({ length: 8 }, (_, index) => {
    // Calculate the Y position of each port with equal gaps
    const portPosition = {
@@ -58,17 +59,29 @@ export const adjustPositions = (width: number, height: number, numRows: number =
    };
  });
 
-  // Constants for port offsets relative to gate position
+ const adjustedOutPutPorts=Array.from({length:6},(_,index)=>{
+  const portPosition = {
+    x: width * 0.98,  // Fixed X position for all input ports (adjust as needed)
+    y: height * 0.20 + (index * GAP),  // Equal vertical spacing between ports
+  };
+  return {
+    id: `port-output-${index + 1}`,
+     position: portPosition,
+     radius: INPUT_RADIUS,
+     type: 'final-output',
+     value: null
+  }
+ })
+
   const INPUT_OFFSET_X = -30;
   const INPUT1_OFFSET_Y = -15;
   const INPUT2_OFFSET_Y = 15;
-  const OUTPUT_OFFSET_X = 40;
+  const OUTPUT_OFFSET_X = 54;
 
-  // Gate types setup: each row will have the same gate type (and, or, not)
+
   const gateTypes = ['and', 'or', 'not']; // Define one type for each row
 
-  // Grid setup: calculate the position of gates in a grid
-  const startX = width * 0.2;  // Starting X position
+  const startX = width * 0.16;  // Starting X position
   const startY = height * 0.1; // Starting Y position
   const spacingX = (width * 0.6) / (numColumns - 1); // Horizontal spacing
   const spacingY = height * 0.19; // Vertical spacing
@@ -91,8 +104,8 @@ export const adjustPositions = (width: number, height: number, numRows: number =
       {
         id: `gate${index + 1}_input1`,
         position: {
-          x: gatePosition.x, // Centered horizontally
-          y: gatePosition.y  // Centered vertically
+          x: gatePosition.x +INPUT_OFFSET_X, // Centered horizontally
+          y: gatePosition.y +INPUT1_OFFSET_Y+15 // Centered vertically
         },
         type: 'gate-input',
         value: null,
@@ -135,13 +148,13 @@ export const adjustPositions = (width: number, height: number, numRows: number =
         },
         type: 'output',
         value: null,
-        radius: 6
+        radius: 7.5
       },
       type: gateType  // Assign the same gate type for each row
     };
   });
 
-  return { adjustedPorts, adjustedGates };
+  return { adjustedPorts, adjustedGates,adjustedOutPutPorts };
 };
 
 
