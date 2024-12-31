@@ -148,8 +148,10 @@ const GatePage = () => {
       const isValidConnection = 
       selectedPort.id !== targetedPort.id && // Different ports
       selectedPort.type !== targetedPort.type && // Different port types
-      !(selectedPort.type === "input" && targetedPort.type === "output") && selectedPort.type!=="final-output"; // Correct direction
-        if(isValidConnection){
+      !(selectedPort.type === "input" && targetedPort.type === "output") && selectedPort.type!=="final-output"
+       && !(selectedPort.type==="gate-input" && targetedPort.type==="final-output")
+        
+      if(isValidConnection){
           //@to sync the gate input port with input port I have assigned the initial input port value to the targeted gate input port
         const updatedTargetport={...targetedPort,value:selectedPort.value} 
         
@@ -350,7 +352,9 @@ const handleBoardPositioning=()=>{
     className='flex flex-col items-center justify-center relative  '
     >
       
-      <button onClick={clearConnections} className=' right-5 top-0'>Clear</button>
+      <div className='flex items-end justify-end mr-4 w-full'>
+      <button onClick={clearConnections} className='bg-red-600 px-2 text-slate-50 rounded-md '>Clear</button>
+      </div>
       
         <canvas
 
