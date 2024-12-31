@@ -84,7 +84,7 @@ export const adjustPositions = (width: number, height: number, numRows: number =
   const startX = width * 0.16;  // Starting X position
   const startY = height * 0.1; // Starting Y position
   const spacingX = (width * 0.6) / (numColumns - 1); // Horizontal spacing
-  const spacingY = height * 0.15; // Vertical spacing
+  const spacingY = height * 0.165; // Vertical spacing
 
   // Generate gates and arrange them in a grid layout with same type for each row
   const adjustedGates = Array.from({ length: numRows * numColumns }, (_, index) => {

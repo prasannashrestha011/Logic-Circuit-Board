@@ -336,11 +336,11 @@ const handleBoardPositioning=()=>{
 }
   return (
     <div
-    className='flex flex-col items-center justify-center '
+    className='flex flex-col items-center justify-center relative'
     >
-      <div className='flex items-end justify-end w-full mr-10'>
-      <button onClick={clearConnections}>Clear</button>
-      </div>
+      
+      <button onClick={clearConnections} className='absolute right-5 top-0'>Clear</button>
+      
         <canvas
 
         ref={canvasRef}
@@ -352,7 +352,7 @@ const handleBoardPositioning=()=>{
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        className='border border-black flex-1'
+        className='border border-black flex-1 '
         width={canvasResolution?.width}
         height={canvasResolution?.height}
         />
