@@ -350,7 +350,7 @@ const handleBoardPositioning=()=>{
     className='flex flex-col items-center justify-center relative  '
     >
       
-      <button onClick={clearConnections} className='absolute right-5 top-0'>Clear</button>
+      <button onClick={clearConnections} className=' right-5 top-0'>Clear</button>
       
         <canvas
 
