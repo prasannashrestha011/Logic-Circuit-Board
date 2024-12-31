@@ -347,7 +347,7 @@ const handleBoardPositioning=()=>{
 }
   return (
     <div
-    className='flex flex-col items-center justify-center relative overflow-hidden min-h-screen'
+    className='flex flex-col items-center justify-center relative  min-h-screen'
     >
       
       <button onClick={clearConnections} className=' right-5 top-0'>Clear</button>
@@ -363,7 +363,7 @@ const handleBoardPositioning=()=>{
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        className='border border-black flex-1 bg-[url("/backgroundGrid.png")] overflow-hidden'
+        className='border border-black flex-1 bg-[url("/backgroundGrid.png")] '
         width={canvasResolution?.width}
         height={canvasResolution?.height}
         />
