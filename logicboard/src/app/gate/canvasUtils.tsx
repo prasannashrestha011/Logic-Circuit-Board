@@ -8,7 +8,11 @@ import { DrawAndGate, DrawNanDGate, DrawNorGate, DrawNotGate, DrawORgate, DrawXo
         const ctx=canvas.getContext('2d')
         if(!ctx) return 
         ctx.clearRect(0,0,canvas.width,canvas.height)
-
+        const img = new Image();
+        img.src = '/backgroundGrid.png';
+        img.onload = () => {
+    
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);}
         //### for input ports ###
         portInputs.forEach(port=>{
         

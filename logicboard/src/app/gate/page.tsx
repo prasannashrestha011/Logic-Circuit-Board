@@ -132,14 +132,19 @@ const GatePage = () => {
     //@@ after the user leave the mouse , it will check if the last coordiante lies on ports of gates
     //@@ if lies on certain port, it will create new connection {selectedPort,targeted port} and push to the connection array
     const onTouchUp=(point:Point)=>{
+      setIsDrawing(false)
       if(!canvasRef.current || !selectedPort) return 
       
-      setIsDrawing(false)
+     
      
    
       const targetedPort=findPortAtPoint(point)  
       if(targetedPort && selectedPort){
- 
+          const hasConnections= connections.find(c=>c.start.id==selectedPort.id || c.end.id==selectedPort.id)
+          if(hasConnections) return
+
+
+
       const isValidConnection = 
       selectedPort.id !== targetedPort.id && // Different ports
       selectedPort.type !== targetedPort.type && // Different port types
@@ -190,7 +195,8 @@ const GatePage = () => {
   
 
     const handleClickEvent=(e:React.MouseEvent<HTMLCanvasElement>)=>{
-      if(!canvasRef.current) return 
+      if(!canvasRef.current || isDrawing) return 
+      console.log("triggered",isDrawing)
       const points=getCanvasPoints(canvasRef.current,e.clientX,e.clientY)
       toggleClick(points)
     }
@@ -201,7 +207,7 @@ const GatePage = () => {
       const clickedPort=findPortAtPoint(point)
       
       if(!clickedPort) return 
-
+   
       const newValue=!clickedPort.value
       console.log("clicked port ",clickedPort)
       if(clickedPort.type==="input"){

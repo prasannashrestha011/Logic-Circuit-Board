@@ -37,127 +37,118 @@ export const Gates:Gate[]=[
      
 ]
 // utils/calculatePositions.ts
-export const adjustPositions = (width: number, height: number, numRows: number = 6, numColumns: number = 4) => {
+export const adjustPositions = (width: number, height: number, numColumns: number = 4) => {
+  const INPUT_RADIUS = 9;
+  const GAP = height * 0.11;
 
- const INPUT_RADIUS = 9;
- const GAP = height * 0.11;  // Gap between ports (adjust this value as needed)
+  const adjustedPorts = Array.from({ length: 8 }, (_, index) => ({
+    id: `port-input-${index + 1}`,
+    position: {
+      x: width * 0.03,
+      y: height * 0.03 + (index * GAP),
+    },
+    radius: INPUT_RADIUS,
+    type: 'input',
+    value: false
+  }));
 
-
- const adjustedPorts = Array.from({ length: 8 }, (_, index) => {
-   // Calculate the Y position of each port with equal gaps
-   const portPosition = {
-     x: width * 0.03,  // Fixed X position for all input ports (adjust as needed)
-     y: height * 0.03 + (index * GAP),  // Equal vertical spacing between ports
-   };
-
-   return {
-     id: `port-input-${index + 1}`,
-     position: portPosition,
-     radius: INPUT_RADIUS,
-     type: 'input',
-     value: false
-   };
- });
-
- const adjustedOutPutPorts=Array.from({length:6},(_,index)=>{
-  const portPosition = {
-    x: width * 0.95,  // Fixed X position for all input ports (adjust as needed)
-    y: height * 0.20 + (index * GAP),  // Equal vertical spacing between ports
-  };
-  return {
+  const adjustedOutPutPorts = Array.from({ length: 6 }, (_, index) => ({
     id: `port-output-${index + 1}`,
-     position: portPosition,
-     radius: INPUT_RADIUS,
-     type: 'final-output',
-     value: null
-  }
- })
+    position: {
+      x: width * 0.95,
+      y: height * 0.20 + (index * GAP),
+    },
+    radius: INPUT_RADIUS,
+    type: 'final-output',
+    value: null
+  }));
 
   const INPUT_OFFSET_X = -30;
   const INPUT1_OFFSET_Y = -15;
   const INPUT2_OFFSET_Y = 15;
   const OUTPUT_OFFSET_X = 54;
 
+  // Define gates for each row
+  const gateRows = [
+    ['and', 'and', 'nand', 'nand'],
+    ['or', 'or', 'nor', 'nor'],
+    ['x-or', 'x-or','not', 'not']
+  ];
 
-  const gateTypes = ['and', 'or', 'not','nand','nor','x-or']; // Define one type for each row
+  const startX = width * 0.16;
+  const startY = height * 0.1;
+  const spacingX = (width * 0.6) / (numColumns - 1);
+  const spacingY = height * 0.25;
 
-  const startX = width * 0.16;  // Starting X position
-  const startY = height * 0.1; // Starting Y position
-  const spacingX = (width * 0.6) / (numColumns - 1); // Horizontal spacing
-  const spacingY = height * 0.165; // Vertical spacing
+  const adjustedGates:Gate[] = [];
 
-  // Generate gates and arrange them in a grid layout with same type for each row
-  const adjustedGates = Array.from({ length: numRows * numColumns }, (_, index) => {
-    const row = Math.floor(index / numColumns);  // Determine the row of the gate
-    const column = index % numColumns;  // Determine the column of the gate
+  gateRows.forEach((row, rowIndex) => {
+    row.forEach((gateType, colIndex) => {
+      const index = rowIndex * numColumns + colIndex;
+      
+      const gatePosition = {
+        x: startX + (spacingX * colIndex),
+        y: startY + (spacingY * rowIndex)
+      };
 
-    const gatePosition = {
-      x: startX + (spacingX * column),  // Horizontal position based on column
-      y: startY + (spacingY * row)      // Vertical position based on row
-    };
-
-    // Each row will have the same gate type
-    const gateType = gateTypes[row];
-
-    const gatePortRadius=8
-    // Adjust the number of inputs for the NOT gate
-    const inputs = gateType === 'not' ? [
-      {
-        id: `gate${index + 1}_input1`,
-        position: {
-          x: gatePosition.x +INPUT_OFFSET_X, // Centered horizontally
-          y: gatePosition.y +INPUT1_OFFSET_Y+15 // Centered vertically
+      const gatePortRadius = 8;
+      const inputs = gateType === 'not' ? [
+        {
+          id: `gate${index + 1}_input1`,
+          position: {
+            x: gatePosition.x + INPUT_OFFSET_X,
+            y: gatePosition.y + INPUT1_OFFSET_Y + 15
+          },
+          type: 'gate-input',
+          value: null,
+          radius: gatePortRadius
+        }
+      ] : [
+        {
+          id: `gate${index + 1}_input1`,
+          position: {
+            x: gatePosition.x + INPUT_OFFSET_X,
+            y: gatePosition.y + INPUT1_OFFSET_Y
+          },
+          type: 'gate-input',
+          value: null,
+          radius: gatePortRadius
         },
-        type: 'gate-input',
-        value: null,
-        radius: gatePortRadius
-      }
-    ] : [
-      {
-        id: `gate${index + 1}_input1`,
-        position: {
-          x: gatePosition.x + INPUT_OFFSET_X,
-          y: gatePosition.y + INPUT1_OFFSET_Y
-        },
-        type: 'gate-input',
-        value: null,
-        radius: gatePortRadius
-      },
-      {
-        id: `gate${index + 1}_input2`,
-        position: {
-          x: gatePosition.x + INPUT_OFFSET_X,
-          y: gatePosition.y + INPUT2_OFFSET_Y
-        },
-        type: 'gate-input',
-        value: null,
-        radius: gatePortRadius
-      }
-    ];
+        {
+          id: `gate${index + 1}_input2`,
+          position: {
+            x: gatePosition.x + INPUT_OFFSET_X,
+            y: gatePosition.y + INPUT2_OFFSET_Y
+          },
+          type: 'gate-input',
+          value: null,
+          radius: gatePortRadius
+        }
+      ];
 
-    return {
-      id: `Gate_${index + 1}`,
-      position: gatePosition,
-      width: 80,
-      height: 60,
-      inputs: inputs,
-      output: {
-        id: `gate${index + 1}_output`,
-        position: {
-          x: gatePosition.x + OUTPUT_OFFSET_X,
-          y: gatePosition.y
+      adjustedGates.push({
+        id: `Gate_${index + 1}`,
+        position: gatePosition,
+        width: 80,
+        height: 60,
+        inputs,
+        output: {
+          id: `gate${index + 1}_output`,
+          position: {
+            x: gatePosition.x + OUTPUT_OFFSET_X,
+            y: gatePosition.y
+          },
+          type: 'output',
+          value: null,
+          radius: 7.5
         },
-        type: 'output',
-        value: null,
-        radius: 7.5
-      },
-      type: gateType  // Assign the same gate type for each row
-    };
+        type: gateType
+      });
+    });
   });
 
-  return { adjustedPorts, adjustedGates,adjustedOutPutPorts };
+  return { adjustedPorts, adjustedGates, adjustedOutPutPorts };
 };
-
 
 
 
