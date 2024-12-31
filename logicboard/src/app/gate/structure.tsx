@@ -37,7 +37,7 @@ export const Gates:Gate[]=[
      
 ]
 // utils/calculatePositions.ts
-export const adjustPositions = (width: number, height: number, numRows: number = 3, numColumns: number = 4) => {
+export const adjustPositions = (width: number, height: number, numRows: number = 6, numColumns: number = 4) => {
 
  const INPUT_RADIUS = 9;
  const GAP = height * 0.11;  // Gap between ports (adjust this value as needed)
@@ -79,12 +79,12 @@ export const adjustPositions = (width: number, height: number, numRows: number =
   const OUTPUT_OFFSET_X = 54;
 
 
-  const gateTypes = ['and', 'or', 'not']; // Define one type for each row
+  const gateTypes = ['and', 'or', 'not','nand','nor','x-or']; // Define one type for each row
 
   const startX = width * 0.16;  // Starting X position
   const startY = height * 0.1; // Starting Y position
   const spacingX = (width * 0.6) / (numColumns - 1); // Horizontal spacing
-  const spacingY = height * 0.19; // Vertical spacing
+  const spacingY = height * 0.15; // Vertical spacing
 
   // Generate gates and arrange them in a grid layout with same type for each row
   const adjustedGates = Array.from({ length: numRows * numColumns }, (_, index) => {

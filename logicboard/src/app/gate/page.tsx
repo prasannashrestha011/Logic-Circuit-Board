@@ -154,13 +154,24 @@ const GatePage = () => {
         
         //@@ sets connections
       
+        if(selectedPort.type=="gate-input" && updatedTargetport.type=="input"){
+          console.log("in the function ssss")
           setConnections([
             ...connections,
             {
-              start:selectedPort,
-              end:updatedTargetport
+              start:updatedTargetport,
+              end:selectedPort
             }
           ])
+          return
+        }
+        setConnections([
+          ...connections,
+          {
+            start:selectedPort,
+            end:updatedTargetport
+          }
+        ])
         }
 
         
@@ -226,6 +237,28 @@ const GatePage = () => {
                     targetGate.inputs
                   );
                 }
+                console.log(outputPorts, " is your idss")
+              const finalOutputPort=outputPorts.find((outputPort)=>{
+                 return conn.end.id===outputPort.id
+              })
+              console.log("final output port",finalOutputPort)
+              if(finalOutputPort){
+             
+                setOutputPorts(prevOutputPort=>{
+                  const updatedOutputPorts=prevOutputPort.map((port)=>{
+                   if( port.id===finalOutputPort.id){
+                    console.log("found final output port",port)
+                     return {
+                      ...port,
+                      value:outputValue
+                     }
+                   }
+                   return port
+                  })
+                  return updatedOutputPorts
+                  
+                })
+              }
               }
             });
         
@@ -255,21 +288,22 @@ const GatePage = () => {
         drawCanvas(canvas,inputPorts,outputPorts,gates,connections)
     }
 
-
+    const clearConnections=()=>{
+      setConnections([])
+      handleBoardPositioning()
+    }
     useEffect(()=>{
       drawCanvasHandler()
-     
+      console.log(connections)
     },[inputPorts,connections,selectedPort])
+
     useEffect(()=>{
       handleResize()
     },[])
     useEffect(() => {
-      if (canvasResolution) {
-        const { adjustedPorts, adjustedGates,adjustedOutPutPorts } = adjustPositions(canvasResolution.width, canvasResolution.height)
-        setInputPorts(adjustedPorts)
-        setOutputPorts(adjustedOutPutPorts)
-        setGates(adjustedGates)
-      }
+     
+        handleBoardPositioning()
+   
     }, [canvasResolution])
     useEffect(() => {
   const portrait = window.matchMedia("(orientation: portrait)");
@@ -292,11 +326,23 @@ const GatePage = () => {
   };
 }, []);
 
+const handleBoardPositioning=()=>{
+  if(canvasResolution){
+    const { adjustedPorts, adjustedGates,adjustedOutPutPorts } = adjustPositions(canvasResolution.width, canvasResolution.height)
+  setInputPorts(adjustedPorts)
+  setOutputPorts(adjustedOutPutPorts)
+  setGates(adjustedGates)
+  }
+}
   return (
     <div
-    className='flex items-center justify-center my-5'
+    className='flex flex-col items-center justify-center '
     >
+      <div className='flex items-end justify-end w-full mr-10'>
+      <button onClick={clearConnections}>Clear</button>
+      </div>
         <canvas
+
         ref={canvasRef}
         onClick={handleClickEvent}
         
@@ -306,7 +352,7 @@ const GatePage = () => {
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        className='border border-black'
+        className='border border-black flex-1'
         width={canvasResolution?.width}
         height={canvasResolution?.height}
         />

@@ -17,6 +17,19 @@ import { Gate, Port } from "../types";
             console.log(!inputValues)
             return !inputValues[0]
           } 
+        case 'nand':
+          if(inputValues[0]!=null && inputValues[1]!==null){
+            return !(inputValues[0] && inputValues[1])
+          }
+        case 'nor':
+          if(inputValues[0]!=null && inputValues[1]!==null){
+            return !(inputValues[0] || inputValues[1])
+        }
+        case 'x-or':
+          if(inputValues[0]!=null && inputValues[1]!==null){
+            return (inputValues[0] && !inputValues[1]) || (!inputValues[0] && inputValues[1])
+
+          }
         default:
           return null;
       }

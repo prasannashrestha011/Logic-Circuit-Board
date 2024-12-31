@@ -1,6 +1,6 @@
 
 import { connection, Gate, Point, Port } from "./types"
-import { DrawAndGate, DrawNotGate, DrawORgate } from "./utils/drawGates"
+import { DrawAndGate, DrawNanDGate, DrawNorGate, DrawNotGate, DrawORgate, DrawXorGate } from "./utils/drawGates"
 
  export const drawCanvas=(canvas:HTMLCanvasElement,portInputs:Port[],outputPorts:Port[],gates:Gate[],connections:connection[])=>{
    
@@ -46,7 +46,15 @@ import { DrawAndGate, DrawNotGate, DrawORgate } from "./utils/drawGates"
           if(gate.type=="not"){
             DrawNotGate(ctx,gate)
           }
-
+          if(gate.type=="nand"){
+            DrawNanDGate(ctx,gate)
+          }
+          if(gate.type=="nor"){
+            DrawNorGate(ctx,gate)
+          }
+          if(gate.type=="x-or"){
+            DrawXorGate(ctx,gate)
+          }
           gate.inputs.forEach(port=>{
             ctx.beginPath()
             const {x,y}=port.position
