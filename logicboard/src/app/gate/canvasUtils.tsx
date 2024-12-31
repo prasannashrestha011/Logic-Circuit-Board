@@ -42,8 +42,8 @@ import { DrawAndGate, DrawNanDGate, DrawNorGate, DrawNotGate, DrawORgate, DrawXo
 
           ctx.beginPath()
           ctx.lineWidth=2
-          ctx.moveTo(x,y)
-          ctx.lineTo(x+XOFFSET,y)
+          ctx.moveTo(x+XOFFSET,y)
+          ctx.lineTo(x+11,y)
           ctx.stroke()
       })
         // ### for logic gate ###
