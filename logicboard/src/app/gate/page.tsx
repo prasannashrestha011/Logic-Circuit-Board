@@ -313,12 +313,7 @@ const GatePage = () => {
         const canvas=canvasRef.current
         const ctx=canvas.getContext('2d')
         if(!ctx) return
-        const img=new Image()
-        img.src="/backgroundGrid.png"
-        img.onload=()=>{
-          ctx.globalAlpha=0.8
-          ctx?.drawImage(img,0,0,canvas.width,canvas.height)
-        }
+        
       }
     }, [canvasResolution])
     useEffect(() => {
@@ -352,10 +347,10 @@ const handleBoardPositioning=()=>{
 }
   return (
     <div
-    className='flex flex-col items-center justify-center relative'
+    className='flex flex-col items-center justify-center relative overflow-hidden min-h-screen'
     >
       
-      <button onClick={clearConnections} className='absolute right-5 top-0'>Clear</button>
+      <button onClick={clearConnections} className=' right-5 top-0'>Clear</button>
       
         <canvas
 
@@ -368,7 +363,7 @@ const handleBoardPositioning=()=>{
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        className='border border-black flex-1  '
+        className='border border-black flex-1 bg-[url("/backgroundGrid.png")] overflow-hidden'
         width={canvasResolution?.width}
         height={canvasResolution?.height}
         />

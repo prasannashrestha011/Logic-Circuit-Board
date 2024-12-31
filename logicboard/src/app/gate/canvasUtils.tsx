@@ -8,11 +8,7 @@ import { DrawAndGate, DrawNanDGate, DrawNorGate, DrawNotGate, DrawORgate, DrawXo
         const ctx=canvas.getContext('2d')
         if(!ctx) return 
         ctx.clearRect(0,0,canvas.width,canvas.height)
-        const img = new Image();
-        img.src = '/backgroundGrid.png';
-        img.onload = () => {
-    
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);}
+      
         //### for input ports ###
         portInputs.forEach(port=>{
         
@@ -43,6 +39,12 @@ import { DrawAndGate, DrawNanDGate, DrawNorGate, DrawNotGate, DrawORgate, DrawXo
           ctx.fillStyle=port.value?"red":"black"
           ctx.arc(x+XOFFSET,y,port.radius,0,Math.PI*2)
           ctx.fill()
+
+          ctx.beginPath()
+          ctx.lineWidth=2
+          ctx.moveTo(x,y)
+          ctx.lineTo(x+XOFFSET,y)
+          ctx.stroke()
       })
         // ### for logic gate ###
       
