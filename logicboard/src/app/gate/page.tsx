@@ -143,7 +143,7 @@ const GatePage = () => {
       const isValidConnection = 
       selectedPort.id !== targetedPort.id && // Different ports
       selectedPort.type !== targetedPort.type && // Different port types
-      !(selectedPort.type === "input" && targetedPort.type === "output"); // Correct direction
+      !(selectedPort.type === "input" && targetedPort.type === "output") && selectedPort.type!=="final-output"; // Correct direction
         if(isValidConnection){
           //@to sync the gate input port with input port I have assigned the initial input port value to the targeted gate input port
         const updatedTargetport={...targetedPort,value:selectedPort.value} 
@@ -155,7 +155,7 @@ const GatePage = () => {
         //@@ sets connections
       
         if(selectedPort.type=="gate-input" && updatedTargetport.type=="input"){
-          console.log("in the function ssss")
+   
           setConnections([
             ...connections,
             {

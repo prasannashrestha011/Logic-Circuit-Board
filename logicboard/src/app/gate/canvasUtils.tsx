@@ -15,17 +15,29 @@ import { DrawAndGate, DrawNanDGate, DrawNorGate, DrawNotGate, DrawORgate, DrawXo
             ctx.beginPath()
             const {x,y}=port.position
             ctx.arc(x,y,port.radius,0,Math.PI*2)
+        
             ctx.fillStyle=port.value?"orange":"black"
             ctx.fill()
+
         })
 
         //### for output ports ###
         outputPorts.forEach(port=>{
         
+          const XOFFSET=30
           ctx.beginPath()
           const {x,y}=port.position
           ctx.arc(x,y,port.radius,0,Math.PI*2)
-          ctx.fillStyle=port.value?"orange":"black"
+          ctx.fillStyle="red"
+          ctx.fill()
+          ctx.beginPath()
+          ctx.fillStyle="white"
+          ctx.arc(x,y,port.radius/4,0,Math.PI*2)
+          ctx.fill()
+
+          ctx.beginPath()
+          ctx.fillStyle=port.value?"red":"black"
+          ctx.arc(x+XOFFSET,y,port.radius,0,Math.PI*2)
           ctx.fill()
       })
         // ### for logic gate ###
@@ -59,7 +71,12 @@ import { DrawAndGate, DrawNanDGate, DrawNorGate, DrawNotGate, DrawORgate, DrawXo
             ctx.beginPath()
             const {x,y}=port.position
             ctx.arc(x,y,port.radius,0,Math.PI*2)
-            ctx.fillStyle="orange" 
+            ctx.fillStyle="red" 
+            ctx.fill()
+
+            ctx.beginPath()
+            ctx.fillStyle="white"
+            ctx.arc(x,y,port.radius/4,0,Math.PI*2)
             ctx.fill()
            })
            ctx.beginPath()
@@ -67,16 +84,26 @@ import { DrawAndGate, DrawNanDGate, DrawNorGate, DrawNotGate, DrawORgate, DrawXo
            ctx.arc(outPutX,outPutY,gate.output.radius,0,Math.PI*2)
            ctx.fillStyle=gate.output.value?"red":"black"
            ctx.fill()
+
+
+           ctx.beginPath()
+           ctx.fillStyle="white"
+           ctx.arc(outPutX,outPutY,gate.output.radius/4,0,Math.PI*2)
+           ctx.fill()
         })
 
         //##for connections lines
-        connections.forEach(conn=>{
-            ctx.beginPath()
-            ctx.strokeStyle="black"
-            ctx.moveTo(conn.start.position.x,conn.start.position.y)
-            ctx.lineTo(conn.end.position.x,conn.end.position.y)
-            ctx.stroke()
-        })
+        connections.forEach((conn) => {
+          ctx.beginPath();
+          ctx.strokeStyle = "black";
+          ctx.setLineDash([8, 5]); // [dash length, gap length]
+          ctx.lineWidth = 2; // Adjust thickness
+          ctx.moveTo(conn.start.position.x, conn.start.position.y);
+          ctx.lineTo(conn.end.position.x, conn.end.position.y);
+          ctx.stroke();
+          ctx.setLineDash([]); // Reset line dash for future drawings
+      });
+      
         
 }
 export const getCanvasPoints=(canvas:HTMLCanvasElement,clientX:number,clientY:number):Point=>{

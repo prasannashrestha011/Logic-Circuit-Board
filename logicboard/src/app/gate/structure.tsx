@@ -61,7 +61,7 @@ export const adjustPositions = (width: number, height: number, numRows: number =
 
  const adjustedOutPutPorts=Array.from({length:6},(_,index)=>{
   const portPosition = {
-    x: width * 0.98,  // Fixed X position for all input ports (adjust as needed)
+    x: width * 0.95,  // Fixed X position for all input ports (adjust as needed)
     y: height * 0.20 + (index * GAP),  // Equal vertical spacing between ports
   };
   return {
@@ -99,6 +99,7 @@ export const adjustPositions = (width: number, height: number, numRows: number =
     // Each row will have the same gate type
     const gateType = gateTypes[row];
 
+    const gatePortRadius=8
     // Adjust the number of inputs for the NOT gate
     const inputs = gateType === 'not' ? [
       {
@@ -109,7 +110,7 @@ export const adjustPositions = (width: number, height: number, numRows: number =
         },
         type: 'gate-input',
         value: null,
-        radius: 6
+        radius: gatePortRadius
       }
     ] : [
       {
@@ -120,7 +121,7 @@ export const adjustPositions = (width: number, height: number, numRows: number =
         },
         type: 'gate-input',
         value: null,
-        radius: 6
+        radius: gatePortRadius
       },
       {
         id: `gate${index + 1}_input2`,
@@ -130,7 +131,7 @@ export const adjustPositions = (width: number, height: number, numRows: number =
         },
         type: 'gate-input',
         value: null,
-        radius: 6
+        radius: gatePortRadius
       }
     ];
 
