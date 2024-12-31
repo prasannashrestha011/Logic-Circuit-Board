@@ -303,7 +303,17 @@ const GatePage = () => {
     useEffect(() => {
      
         handleBoardPositioning()
-   
+      if(canvasRef.current){
+        const canvas=canvasRef.current
+        const ctx=canvas.getContext('2d')
+        if(!ctx) return
+        const img=new Image()
+        img.src="/backgroundGrid.png"
+        img.onload=()=>{
+          ctx.globalAlpha=0.8
+          ctx?.drawImage(img,0,0,canvas.width,canvas.height)
+        }
+      }
     }, [canvasResolution])
     useEffect(() => {
   const portrait = window.matchMedia("(orientation: portrait)");
@@ -352,7 +362,7 @@ const handleBoardPositioning=()=>{
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        className='border border-black flex-1 '
+        className='border border-black flex-1  '
         width={canvasResolution?.width}
         height={canvasResolution?.height}
         />
