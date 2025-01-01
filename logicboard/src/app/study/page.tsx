@@ -7,6 +7,7 @@ import { GateCreator } from './gates/GateCreator'
 import { generateGatePosition } from './gates/utils/getPosition'
 import { getCanvasPoints } from '../gate/canvasUtils'
 import { isPointInGate } from './findGate'
+import { calDistance } from '../gate/utils/calDistance'
 
 
 const Study = () => {
@@ -80,6 +81,17 @@ const Study = () => {
   
         if(clickedGate){
             setSelectedGate(clickedGate)
+            return
+        }
+        for(const gate of gateNodes){
+            const clickedInputPort=gate.inputs.find(port=>{
+                const distance=calDistance(port,point)
+                return distance<=port.radius
+            })
+            console.log("your clicked this port :",clickedInputPort)
+            if(clickedInputPort) return
+            const outputPortDistance=calDistance(gate.output,point)
+            outputPortDistance<=gate.output.radius?console.log("clicked output port",gate.output):console.log("not clicked")
         }
     }
     const onTouchMove=(point:Point)=>{
