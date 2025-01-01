@@ -1,7 +1,11 @@
 import { Gate, Point } from "@/app/gate/types"
 
-
+   
 export class GateCreator{
+    private static offsetNOT=30
+  
+    private static Xoffset=40
+    private static Yoffset=15
     private static counter=0
     static gateWidth=60
     static gateHeight=50
@@ -11,7 +15,7 @@ export class GateCreator{
             id:id,
             inputs:[
                 {id:`input-${this.counter++}`,
-                position:{x:position.x-30,y:position.y},
+                position:{x:position.x-this.offsetNOT,y:position.y},
                 radius:9,
                 type:"gate-input",
                 value:null
@@ -19,7 +23,7 @@ export class GateCreator{
             ],
             output:{
                 id:`output-${this.counter++}`,
-                position:{x:position.x+60,y:position.y},
+                position:{x:position.x+this.offsetNOT*2,y:position.y},
                 radius:9,
                 type:"gate-output",
                 value:null
@@ -32,13 +36,13 @@ export class GateCreator{
             id:id,
             inputs:[
                 {id:`input-${this.counter++}`,
-                position:{x:position.x-40,y:position.y-15},
+                position:{x:position.x-this.Xoffset,y:position.y-this.Yoffset},
                 radius:9,
                 type:"gate-input",
                 value:null
                 },
                 {id:`input-${this.counter++}`,
-                position:{x:position.x-40,y:position.y+15},
+                position:{x:position.x-this.Xoffset,y:position.y+this.Yoffset},
                 radius:9,
                 type:"gate-input",
                 value:null
@@ -47,7 +51,7 @@ export class GateCreator{
             ],
             output:{
                 id:`output-${this.counter++}`,
-                position:{x:position.x+60,y:position.y},
+                position:{x:position.x+this.offsetNOT*2,y:position.y},
                 radius:9,
                 type:"gate-output",
                 value:null
@@ -59,5 +63,33 @@ export class GateCreator{
         }
 
         return gate
+    }
+    static updatePosition(gate:Gate,newPosition:Point):Gate{
+        const updatedInputPort=gate.inputs.map((input,idx)=>({
+            ...input,
+            position:{
+                x:gate.type==='not'?newPosition.x-this.offsetNOT:newPosition.x-this.Xoffset,
+                y:gate.type==='not'?newPosition.y:
+                (
+                    idx==0?newPosition.y-this.Yoffset:newPosition.y+this.Yoffset
+                )
+            },
+           
+        }))
+       const updatedOutput={
+        ...gate.output,
+        position:{
+            x:newPosition.x+this.offsetNOT*2,
+            y:newPosition.y
+        },
+       };
+
+       const updatedGate:Gate={
+        ...gate,
+        position:newPosition,
+        inputs:updatedInputPort,
+        output:updatedOutput
+       }
+       return updatedGate
     }
 }

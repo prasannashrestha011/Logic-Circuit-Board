@@ -5,6 +5,7 @@ import { DrawAndGate, DrawNanDGate, DrawNorGate, DrawNotGate, DrawORgate, DrawXo
 export function DrawGatesNode(canvas:HTMLCanvasElement,gateNodes:Gate[]){
        const ctx=canvas.getContext('2d')
       if(!ctx) return 
+      ctx.clearRect(0,0,canvas.width,canvas.height)
     gateNodes.map(gate=>{
         
         //for input ports
