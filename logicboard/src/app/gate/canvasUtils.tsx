@@ -50,8 +50,6 @@ import { DrawAndGate, DrawNanDGate, DrawNorGate, DrawNotGate, DrawORgate, DrawXo
       
         ctx.stroke();
         gates.forEach(gate=>{
-
-           
   
             if(gate.type=='and'){
              DrawAndGate(ctx,gate)

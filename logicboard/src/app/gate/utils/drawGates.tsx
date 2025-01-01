@@ -35,6 +35,7 @@ ctx.stroke()
 
 }
 export function DrawORgate(ctx:CanvasRenderingContext2D,gate:Gate):void{
+    ctx.lineWidth=2
     ctx.beginPath()
     ctx.fillStyle="blue"
     ctx.moveTo(gate.inputs[0].position.x,gate.inputs[0].position.y)
@@ -205,6 +206,6 @@ export function DrawXorGate(ctx:CanvasRenderingContext2D,gate:Gate):void{
 function DrawNod(ctx:CanvasRenderingContext2D,gate:Gate){
     ctx.beginPath()
     ctx.fillStyle="black"
-    ctx.arc(gate.output.position.x-17,gate.output.position.y,4,0,Math.PI*2)
+    ctx.arc(gate.output.position.x-22,gate.output.position.y,4,0,Math.PI*2)
     ctx.fill()
 }
