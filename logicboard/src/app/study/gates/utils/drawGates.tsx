@@ -1,8 +1,8 @@
-import { Gate } from "@/app/gate/types";
+import { connection, Gate } from "@/app/gate/types";
 import { DrawAndGate, DrawNanDGate, DrawNorGate, DrawNotGate, DrawORgate, DrawXorGate } from "@/app/gate/utils/drawGates";
 
 
-export function DrawGatesNode(canvas:HTMLCanvasElement,gateNodes:Gate[]){
+export function DrawGatesNode(canvas:HTMLCanvasElement,gateNodes:Gate[],connections:connection[]){
        const ctx=canvas.getContext('2d')
       if(!ctx) return 
       ctx.clearRect(0,0,canvas.width,canvas.height)
@@ -41,4 +41,13 @@ export function DrawGatesNode(canvas:HTMLCanvasElement,gateNodes:Gate[]){
         DrawNotGate(ctx,gate)
        }
     })   
+
+    connections.forEach(conn=>{
+        ctx.beginPath()
+        ctx.lineWidth=2
+        ctx.strokeStyle="blue"
+        ctx.moveTo(conn.start.position.x,conn.start.position.y)
+        ctx.lineTo(conn.end.position.x,conn.end.position.y)
+        ctx.stroke()
+    })
 }

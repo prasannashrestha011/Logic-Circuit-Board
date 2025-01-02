@@ -1,4 +1,4 @@
-import { Gate, Point } from "@/app/gate/types"
+import { connection, Gate, Point } from "@/app/gate/types"
 
    
 export class GateCreator{
@@ -9,6 +9,7 @@ export class GateCreator{
     private static counter=0
     static gateWidth=60
     static gateHeight=50
+    static connections:connection[]=[]
     static create(type:string="and",position:Point={x:100,y:100}):Gate{
         const id=`gate-${this.counter++}`
         const gate:Gate=type=="not"?{
