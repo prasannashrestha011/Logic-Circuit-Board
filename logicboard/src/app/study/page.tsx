@@ -143,6 +143,7 @@ const Study = () => {
         
     }
     const onTouchUp=(point:Point)=>{
+        console.log("up up up")
         setIsDrawing(false)
         setIsDragging(false)
         setSelectedGate(null)
@@ -152,7 +153,7 @@ const Study = () => {
                 const distance=calDistance(port,point)
                 return distance<=port.radius
             })
-            if(targetedPort) return 
+        
             const outputPortDistance=calDistance(gate.output,point)
           
             if (outputPortDistance <= gate.output.radius) {
@@ -162,6 +163,7 @@ const Study = () => {
 
 
         }
+        console.log('targeted port',targetedPort)
        if(selectedPort && targetedPort){
         setConnections(prevConnections => [
             ...prevConnections, 
