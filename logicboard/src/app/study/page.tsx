@@ -2,12 +2,13 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { connection, Gate, Point, Port, Res } from '../gate/types'
 import { calDeviceResolution } from '../gate/utils/calResolution'
-import { DrawGatesNode } from './gates/utils/drawGates'
+import { DrawGatesNode, DrawTempoLine } from './gates/utils/drawGates'
 import { GateCreator } from './gates/GateCreator'
 import { generateGatePosition } from './gates/utils/getPosition'
 import { getCanvasPoints } from '../gate/canvasUtils'
 import { isPointInGate } from './findGate'
 import { calDistance } from '../gate/utils/calDistance'
+import { updateConnectionsPosition } from './gates/utils/connnections'
 
 
 const Study = () => {
@@ -53,8 +54,7 @@ const Study = () => {
         if(!canvasRef.current || !isDragging ) return
         const point=getCanvasPoints(canvasRef.current,e.clientX,e.clientY)
         onTouchUp(point)
-        setIsDragging(false)
-        setSelectedGate(null)
+      
     }
 
     const handleTouchDown=(e:React.TouchEvent<HTMLCanvasElement>)=>{
@@ -79,14 +79,15 @@ const Study = () => {
     const handleTouchUp=(e:React.TouchEvent<HTMLCanvasElement>)=>{
         if(!canvasRef.current || !isDragging) return 
      
-        const clientX=e.touches[0].clientX
-        const clientY=e.touches[0].clientY
+        const clientX=e.changedTouches[0].clientX
+        const clientY=e.changedTouches[0].clientY
 
         const point=getCanvasPoints(canvasRef.current,clientX,clientY)
         onTouchUp(point)
     }
 
     const onTouchDown=(point:Point)=>{
+      
         const clickedGate=gateNodes.find(gate=>isPointInGate(point,gate))
            
   
@@ -100,19 +101,21 @@ const Study = () => {
                 const distance=calDistance(port,point)
                 return distance<=port.radius
             })
-            console.log("selected port:",clickedInputPort)
+       
             if(clickedInputPort) {
                 setSelectedPort(clickedInputPort)
                 return
             }
             const outputPortDistance=calDistance(gate.output,point)
+            
             if (outputPortDistance <= gate.output.radius) {
+                console.log("your distance selected ",outputPortDistance)
                 setSelectedPort(gate.output);
             }
         }
     }
     const onTouchMove=(point:Point)=>{
-    
+       
         setSelectedGate(prevGate => {
             if (!prevGate) return null;
     
@@ -121,20 +124,7 @@ const Study = () => {
             console.log(updatedGate)
         
             setConnections(prevConnection=>{
-                const updatedConnection=prevConnection.map(conn=>{
-                    const startMatch=updatedGate.inputs.find(port=>port.id===conn.start.id) || (updatedGate.output.id===conn.start.id?updatedGate.output:null)
-                    const endMatch=updatedGate.inputs.find(port=>port.id===conn.end.id) || (updatedGate.output.id===conn.end.id?updatedGate.output:null)
-                    
-                    const updatedStartPort:Port=startMatch?{...conn.start,position:startMatch.position}:conn.start
-                    const updatedEndPort:Port=endMatch?{...conn.end,position:endMatch.position}:conn.end
-
-                    return {
-                        start:updatedStartPort,
-                        end:updatedEndPort
-                    }
-
-                })
-            return updatedConnection
+                return updateConnectionsPosition(prevConnection,updatedGate)
             })
             
             
@@ -148,26 +138,28 @@ const Study = () => {
             return updatedGate; // Update selectedGate as well
         });
         if(!canvasRef.current || !selectedPort || !isDrawing) return 
-        const canvas=canvasRef.current
-        const ctx=canvas.getContext('2d')
-        if(!ctx) return 
-        ctx.clearRect(0,0,canvas.width,canvas.height)
-        canvasDrawerHandler()
-        ctx.beginPath()
-        ctx.moveTo(selectedPort.position.x,selectedPort.position.y)
-        ctx.lineTo(point.x,point.y)
-        ctx.stroke()
+        DrawTempoLine(canvasRef.current,selectedPort.position,point,canvasDrawerHandler)
       
         
     }
     const onTouchUp=(point:Point)=>{
+        setIsDrawing(false)
+        setIsDragging(false)
+        setSelectedGate(null)
         let targetedPort=null
         for(const gate of gateNodes){
             targetedPort=gate.inputs.find(port=>{
                 const distance=calDistance(port,point)
                 return distance<=port.radius
             })
-           
+            if(targetedPort) return 
+            const outputPortDistance=calDistance(gate.output,point)
+          
+            if (outputPortDistance <= gate.output.radius) {
+                console.log("your distance ",outputPortDistance)
+                targetedPort=gate.output
+            }
+
 
         }
        if(selectedPort && targetedPort){
@@ -179,8 +171,8 @@ const Study = () => {
             }
         ]);
        }
-       setIsDrawing(false)
-       
+      
+       canvasDrawerHandler()
     }
     useEffect(()=>{
       canvasDrawerHandler()

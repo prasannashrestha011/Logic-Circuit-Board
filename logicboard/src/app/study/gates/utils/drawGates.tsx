@@ -1,4 +1,4 @@
-import { connection, Gate } from "@/app/gate/types";
+import { connection, Gate, Point } from "@/app/gate/types";
 import { DrawAndGate, DrawNanDGate, DrawNorGate, DrawNotGate, DrawORgate, DrawXorGate } from "@/app/gate/utils/drawGates";
 
 
@@ -50,4 +50,15 @@ export function DrawGatesNode(canvas:HTMLCanvasElement,gateNodes:Gate[],connecti
         ctx.lineTo(conn.end.position.x,conn.end.position.y)
         ctx.stroke()
     })
+}
+export function DrawTempoLine(canvas:HTMLCanvasElement,startPoint:Point,endPoint:Point,drawCanvasHandler:()=>void){
+    const ctx=canvas.getContext('2d')
+
+    if(!ctx) return 
+    ctx.clearRect(0,0,canvas.width,canvas.height)
+    drawCanvasHandler()
+    ctx.beginPath()
+    ctx.moveTo(startPoint.x,startPoint.y)
+    ctx.lineTo(endPoint.x,endPoint.y)
+    ctx.stroke()
 }
