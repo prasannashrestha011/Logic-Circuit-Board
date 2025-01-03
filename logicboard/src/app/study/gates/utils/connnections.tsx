@@ -16,3 +16,16 @@ export function updateGateConnectionsPosition(prevConnection:connection[],update
     })
 
 }
+export function updatePortConnectionPosition(prevConnection:connection[],updatePort:Port):connection[]{
+    return prevConnection.map(conn=>{
+        const startMatch=conn.start.id===updatePort.id
+        const endMatch=conn.end.id===updatePort.id
+
+        const updatedStartPort:Port=startMatch?{...conn.start,position:updatePort.position}:conn.start 
+        const updatedEndPort:Port=endMatch?{...conn.end,position:updatePort.position}:conn.end
+        return {
+            start:updatedStartPort,
+            end:updatedEndPort
+        }
+    })
+}

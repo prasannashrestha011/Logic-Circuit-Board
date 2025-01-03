@@ -8,7 +8,7 @@ import { generatePosition } from './gates/utils/getPosition'
 import { getCanvasPoints } from '../gate/canvasUtils'
 import { isPointInGate, isPointInPortNode } from './findGate'
 import { calDistance } from '../gate/utils/calDistance'
-import { updateGateConnectionsPosition } from './gates/utils/connnections'
+import { updateGateConnectionsPosition, updatePortConnectionPosition } from './gates/utils/connnections'
 
 
 const Study = () => {
@@ -25,6 +25,7 @@ const Study = () => {
 
     const [selectedGate,setSelectedGate]=useState<Gate | null>(null)
 
+    const [isDraggingPort,setIsDraggingPort]=useState<boolean>(false)
     const [selectedPort,setSelectedPort]=useState<Port | null>(null)
 
     const [connections,setConnections]=useState<connection[]>([])
@@ -109,7 +110,7 @@ const Study = () => {
         if(clickedPortNode){
             console.log("you clicked this port node ",clickedPortNode)
             setSelectedPort(clickedPortNode)
-            return
+           setIsDraggingPort(true)
         }
         setIsDrawing(true)
         for(const gate of gateNodes){
@@ -154,18 +155,23 @@ const Study = () => {
             return updatedGate; // Update selectedGate as well
         });
 
-        setSelectedPort(prevPort=>{
-            if(!prevPort) return null
-            const updatedPort=GateCreator.updatePortPosition(prevPort,point)
-
-            setPortNodes((prevPortNode) =>
-                prevPortNode.map((port) => 
-                    port.id === updatedPort.id ? updatedPort : port
-                )
-            );
-            
-            return updatedPort
-        })
+        if(isDraggingPort){
+            setSelectedPort(prevPort=>{
+                if(!prevPort) return null
+                const updatedPort=GateCreator.updatePortPosition(prevPort,point)
+    
+                setConnections(prevConn=>{
+                    return updatePortConnectionPosition(prevConn,updatedPort)
+                })
+                setPortNodes((prevPortNode) =>
+                    prevPortNode.map((port) => 
+                        port.id === updatedPort.id ? updatedPort : port
+                    )
+                );
+                
+                return updatedPort
+            })
+        }
         if(!canvasRef.current || !selectedPort || !isDrawing) return 
         DrawTempoLine(canvasRef.current,selectedPort.position,point,canvasDrawerHandler)
       
@@ -177,6 +183,7 @@ const Study = () => {
         setIsDragging(false)
         setSelectedGate(null)
         setSelectedPort(null)
+        setIsDraggingPort(false)
         let targetedPort=null
         for(const gate of gateNodes){
             targetedPort=gate.inputs.find(port=>{
@@ -215,7 +222,7 @@ const Study = () => {
     useEffect(()=>{
       canvasDrawerHandler()
       
-        console.log(connections)
+   
     },[portNodes,gateNodes,selectedGate,selectedPort,connections])
   return (
     <div>
