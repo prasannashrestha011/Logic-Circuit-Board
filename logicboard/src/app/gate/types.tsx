@@ -11,7 +11,9 @@ export interface Port{
     type:string 
     value:boolean | null
     radius:number
-    position:Point  
+    position:Point
+    width?:number 
+    height?:number  
 }
 export interface Gate{
     id:string 

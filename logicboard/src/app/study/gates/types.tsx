@@ -1,10 +1,11 @@
-import {  Port } from "@/app/gate/types";
+import {  Point, } from "@/app/gate/types";
 
-interface NodeInfo{
-    gateId:string 
-    portId:Port
-}
-export interface NodeConnection{
-    start:NodeInfo
-    end:NodeInfo
+export interface PortNode{
+    id:string 
+    type:string 
+    value:boolean | null
+    radius:number
+    position:Point,
+    width:number 
+    height:number
 }

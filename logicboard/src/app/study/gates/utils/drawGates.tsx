@@ -1,11 +1,39 @@
-import { connection, Gate, Point } from "@/app/gate/types";
+import { connection, Gate, Point, Port } from "@/app/gate/types";
 import { DrawAndGate, DrawNanDGate, DrawNorGate, DrawNotGate, DrawORgate, DrawXorGate } from "@/app/gate/utils/drawGates";
 
 
-export function DrawGatesNode(canvas:HTMLCanvasElement,gateNodes:Gate[],connections:connection[]){
+export function DrawGatesNode(canvas:HTMLCanvasElement,inputNodes:Port[],gateNodes:Gate[],connections:connection[]){
        const ctx=canvas.getContext('2d')
       if(!ctx) return 
       ctx.clearRect(0,0,canvas.width,canvas.height)
+      inputNodes.map(node => {
+        if(!node.width || !node.height) return
+   
+      
+ 
+        const rectX = node.position.x - node.width / 2;
+        const rectY = node.position.y - node.height / 2;
+      
+        // Draw the rectangle
+        ctx.beginPath();
+        ctx.strokeStyle = "dark black";
+        ctx.rect(rectX, rectY, node.width, node.height);
+        ctx.stroke();
+
+        const text=node.type.split("-")[0]
+        const capitalizedText=text.charAt(0).toUpperCase()+text.slice(1)
+        ctx.font="12px Arial"
+        ctx.fillStyle="black"
+        ctx.textAlign="center"
+        ctx.fillText(capitalizedText, rectX+node.width/2, node.height); 
+      
+        // Draw the circle
+        ctx.beginPath();
+        ctx.fillStyle = "blue";
+        ctx.arc(node.position.x, node.position.y, node.radius, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      
     gateNodes.map(gate=>{
         
         //for input ports

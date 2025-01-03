@@ -4,11 +4,11 @@ import { connection, Gate, Point, Port, Res } from '../gate/types'
 import { calDeviceResolution } from '../gate/utils/calResolution'
 import { DrawGatesNode, DrawTempoLine } from './gates/utils/drawGates'
 import { GateCreator } from './gates/GateCreator'
-import { generateGatePosition } from './gates/utils/getPosition'
+import { generatePosition } from './gates/utils/getPosition'
 import { getCanvasPoints } from '../gate/canvasUtils'
 import { isPointInGate } from './findGate'
 import { calDistance } from '../gate/utils/calDistance'
-import { updateConnectionsPosition } from './gates/utils/connnections'
+import { updateGateConnectionsPosition } from './gates/utils/connnections'
 
 
 const Study = () => {
@@ -18,6 +18,8 @@ const Study = () => {
 
     const [isDragging,setIsDragging]=useState<boolean>(false)
     const [isDrawing,setIsDrawing]=useState<boolean>(false)
+
+    const [portNodes,setPortNodes]=useState<Port[]>([])
     const [gateNodes,setGateNodes]=useState<Gate[]>([])
     const [selectedGate,setSelectedGate]=useState<Gate | null>(null)
     const [selectedPort,setSelectedPort]=useState<Port | null>(null)
@@ -29,14 +31,19 @@ const Study = () => {
     },[])
 
     const handleGateCreation=(type:string)=>{
-        const gatePosition=generateGatePosition()
-        const newGate:Gate=GateCreator.create(type,gatePosition)
+        const gatePosition=generatePosition()
+        const newGate:Gate=GateCreator.createGate(type,gatePosition)
         setGateNodes(prevGateNode=>[...prevGateNode,newGate])
+    }
+    const handlePortCreation=(type:string)=>{
+        const portPosition=generatePosition()
+        const newPort=GateCreator.createPort(type,portPosition)
+        setPortNodes(prevPort=>[...prevPort,newPort])
     }
 
     const canvasDrawerHandler=()=>{
         if(!canvasRef.current) return 
-        DrawGatesNode(canvasRef.current,gateNodes,connections)
+        DrawGatesNode(canvasRef.current,portNodes,gateNodes,connections)
     }
     const handleMouseDown=(e:React.MouseEvent<HTMLCanvasElement>)=>{
    
@@ -120,11 +127,11 @@ const Study = () => {
             if (!prevGate) return null;
     
             // Update the position of the selected gate
-           const updatedGate=GateCreator.updatePosition(prevGate,point)
-            console.log(updatedGate)
+           const updatedGate=GateCreator.updateGatePosition(prevGate,point)
+        
         
             setConnections(prevConnection=>{
-                return updateConnectionsPosition(prevConnection,updatedGate)
+                return updateGateConnectionsPosition(prevConnection,updatedGate)
             })
             
             
@@ -143,7 +150,7 @@ const Study = () => {
         
     }
     const onTouchUp=(point:Point)=>{
-        console.log("up up up")
+     
         setIsDrawing(false)
         setIsDragging(false)
         setSelectedGate(null)
@@ -163,6 +170,12 @@ const Study = () => {
 
 
         }
+        if(!targetedPort){
+            targetedPort=portNodes.find(port=>{
+                const distance=calDistance(port,point)
+                return distance<=port.radius
+            })
+        }
         console.log('targeted port',targetedPort)
        if(selectedPort && targetedPort){
         setConnections(prevConnections => [
@@ -180,7 +193,7 @@ const Study = () => {
       canvasDrawerHandler()
       
         console.log(connections)
-    },[gateNodes,selectedGate,selectedPort,connections])
+    },[portNodes,gateNodes,selectedGate,selectedPort,connections])
   return (
     <div>
         <div className='flex gap-3'>
@@ -190,6 +203,8 @@ const Study = () => {
             <button onClick={()=>handleGateCreation("nor")}>Nor Gate</button>
             <button onClick={()=>handleGateCreation("x-or")}>X-Or Gate</button>
             <button onClick={()=>handleGateCreation("not")}>Not Gate</button>
+            <button onClick={()=>handlePortCreation("input-port")}>Input</button>
+            <button onClick={()=>handlePortCreation("output-port")}>Input</button>
         </div>
         <canvas
            className='border border-black z-20'
