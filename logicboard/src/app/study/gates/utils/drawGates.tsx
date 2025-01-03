@@ -25,7 +25,7 @@ export function DrawGatesNode(canvas:HTMLCanvasElement,inputNodes:Port[],gateNod
         ctx.font="12px Arial"
         ctx.fillStyle="black"
         ctx.textAlign="center"
-        ctx.fillText(capitalizedText, rectX+node.width/2, node.height); 
+        ctx.fillText(capitalizedText, rectX+node.width/2, rectY-3); 
       
         // Draw the circle
         ctx.beginPath();

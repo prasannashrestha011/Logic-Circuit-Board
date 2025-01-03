@@ -6,7 +6,7 @@ import { DrawGatesNode, DrawTempoLine } from './gates/utils/drawGates'
 import { GateCreator } from './gates/GateCreator'
 import { generatePosition } from './gates/utils/getPosition'
 import { getCanvasPoints } from '../gate/canvasUtils'
-import { isPointInGate } from './findGate'
+import { isPointInGate, isPointInPortNode } from './findGate'
 import { calDistance } from '../gate/utils/calDistance'
 import { updateGateConnectionsPosition } from './gates/utils/connnections'
 
@@ -21,7 +21,10 @@ const Study = () => {
 
     const [portNodes,setPortNodes]=useState<Port[]>([])
     const [gateNodes,setGateNodes]=useState<Gate[]>([])
+
+
     const [selectedGate,setSelectedGate]=useState<Gate | null>(null)
+
     const [selectedPort,setSelectedPort]=useState<Port | null>(null)
 
     const [connections,setConnections]=useState<connection[]>([])
@@ -102,6 +105,12 @@ const Study = () => {
             setSelectedGate(clickedGate)
             return
         }
+        const clickedPortNode=portNodes.find(port=>isPointInPortNode(point,port))
+        if(clickedPortNode){
+            console.log("you clicked this port node ",clickedPortNode)
+            setSelectedPort(clickedPortNode)
+            return
+        }
         setIsDrawing(true)
         for(const gate of gateNodes){
             const clickedInputPort=gate.inputs.find(port=>{
@@ -144,6 +153,19 @@ const Study = () => {
     
             return updatedGate; // Update selectedGate as well
         });
+
+        setSelectedPort(prevPort=>{
+            if(!prevPort) return null
+            const updatedPort=GateCreator.updatePortPosition(prevPort,point)
+
+            setPortNodes((prevPortNode) =>
+                prevPortNode.map((port) => 
+                    port.id === updatedPort.id ? updatedPort : port
+                )
+            );
+            
+            return updatedPort
+        })
         if(!canvasRef.current || !selectedPort || !isDrawing) return 
         DrawTempoLine(canvasRef.current,selectedPort.position,point,canvasDrawerHandler)
       
@@ -154,6 +176,7 @@ const Study = () => {
         setIsDrawing(false)
         setIsDragging(false)
         setSelectedGate(null)
+        setSelectedPort(null)
         let targetedPort=null
         for(const gate of gateNodes){
             targetedPort=gate.inputs.find(port=>{
@@ -204,7 +227,7 @@ const Study = () => {
             <button onClick={()=>handleGateCreation("x-or")}>X-Or Gate</button>
             <button onClick={()=>handleGateCreation("not")}>Not Gate</button>
             <button onClick={()=>handlePortCreation("input-port")}>Input</button>
-            <button onClick={()=>handlePortCreation("output-port")}>Input</button>
+            <button onClick={()=>handlePortCreation("output-port")}>Output</button>
         </div>
         <canvas
            className='border border-black z-20'
