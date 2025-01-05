@@ -18,6 +18,8 @@ export  const isPointInGate = (point: Point, gate: Gate): boolean => {
             point.y <= bottom
         );
  };
+
+ //@@ if user is dragging the port outer area execept the port  
  export const isPointInPortNode=(point:Point,port:Port):boolean=>{
     const {position,width,height}=port
     if(!width || !height) return false

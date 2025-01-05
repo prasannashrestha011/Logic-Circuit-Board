@@ -29,7 +29,7 @@ export function DrawGatesNode(canvas:HTMLCanvasElement,inputNodes:Port[],gateNod
       
         // Draw the circle
         ctx.beginPath();
-        ctx.fillStyle = "blue";
+        ctx.fillStyle = node.value?"red":"black";
         ctx.arc(node.position.x, node.position.y, node.radius, 0, Math.PI * 2);
         ctx.fill();
       });
@@ -39,13 +39,13 @@ export function DrawGatesNode(canvas:HTMLCanvasElement,inputNodes:Port[],gateNod
         //for input ports
         gate.inputs.map(inputPort=>{
             ctx.beginPath()
-            ctx.fillStyle="red"
+            ctx.fillStyle=inputPort.value?"red":"black"
             ctx.arc(inputPort.position.x,inputPort.position.y,inputPort.radius,0,Math.PI*2)
             ctx.fill()
         })
         //@@ for output port 
         ctx.beginPath()
-        ctx.fillStyle="red"
+        ctx.fillStyle=gate.output.value?"red":"black"
         ctx.arc(gate.output.position.x,gate.output.position.y,gate.output.radius,0,Math.PI*2)
         ctx.fill()
 
