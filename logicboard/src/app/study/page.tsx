@@ -19,7 +19,7 @@ const Study = () => {
 
     const [isDragging,setIsDragging]=useState<boolean>(false)
     const [isDrawing,setIsDrawing]=useState<boolean>(false)
-
+    const [wasDragging,setWasDragging]=useState<boolean>(false)
     const [portNodes,setPortNodes]=useState<Port[]>([])
     const [gateNodes,setGateNodes]=useState<Gate[]>([])
 
@@ -27,6 +27,7 @@ const Study = () => {
     const [selectedGate,setSelectedGate]=useState<Gate | null>(null)
 
     const [isDraggingPort,setIsDraggingPort]=useState<boolean>(false)
+
     const [selectedPort,setSelectedPort]=useState<Port | null>(null)
 
     const [connections,setConnections]=useState<connection[]>([])
@@ -54,25 +55,30 @@ const Study = () => {
    
         if(!canvasRef.current) return 
         setIsDragging(true)
+        setWasDragging(false)
         const point=getCanvasPoints(canvasRef.current,e.clientX,e.clientY)
         onTouchDown(point)
     }
     const handleMouseMove=(e:React.MouseEvent<HTMLCanvasElement>)=>{
         if(!canvasRef.current || !isDragging ) return
+        setWasDragging(true)
         const point=getCanvasPoints(canvasRef.current,e.clientX,e.clientY)
         onTouchMove(point)
     }
     const handleMouseUp=(e:React.MouseEvent<HTMLCanvasElement>)=>{
         if(!canvasRef.current || !isDragging ) return
+       
         const point=getCanvasPoints(canvasRef.current,e.clientX,e.clientY)
         onTouchUp(point)
+        setIsDragging(false)
       
     }
 
     const handleTouchClick=(e:React.MouseEvent<HTMLCanvasElement>)=>{
-        if(!canvasRef.current || isDragging || isDraggingPort || isDrawing) return 
+        if(!canvasRef.current || isDragging || wasDragging || isDraggingPort || isDrawing) return 
         const point=getCanvasPoints(canvasRef.current,e.clientX,e.clientY)
         onTouchClick(point)
+        setWasDragging(false)
     }
     const handleTouchDown=(e:React.TouchEvent<HTMLCanvasElement>)=>{
         if(!canvasRef.current) return 
@@ -125,8 +131,10 @@ const Study = () => {
             const distance=calDistance(port,point)
             return distance<=port.radius
         })
-        if(!clickedPortNode) return 
+        if(clickedPortNode){
+
         setSelectedPort(clickedPortNode)
+        }
         setIsDrawing(true)
         for(const gate of gateNodes){
             const clickedInputPort=gate.inputs.find(port=>{
@@ -229,13 +237,41 @@ const Study = () => {
         console.log('targeted port',targetedPort)
        if(selectedPort && targetedPort){
         console.log("setting the connection ......")
-        setConnections(prevConnections => [
-            ...prevConnections, 
-            {
-                start: selectedPort, 
-                end: targetedPort
-            }
-        ]);
+
+        const startPort=selectedPort.type=="gate-input" && targetedPort
+        const endPort=targetedPort.type=="input-port" && selectedPort
+        if(startPort && endPort){
+            setConnections(prevConn=>[
+                ...prevConn,
+                {
+                    start:startPort,
+                    end:endPort
+                }
+            ])
+        }else{
+            setConnections(prevConnections => [
+                ...prevConnections, 
+                {
+                    start: selectedPort, 
+                    end: targetedPort
+                }
+            ]);
+        }
+        setGateNodes(prevGate=>{
+            return prevGate.map(gate=>{
+                const updatedInputPorts=gate.inputs.map(port=>{
+                    return port.id===targetedPort.id?{...port,value:selectedPort.value}:port                     
+                })
+                const updatedOutputValue=computeGateOutput(gate.type,updatedInputPorts)
+                console.log("initla outupt, ",updatedOutputValue)
+                return {
+                    ...gate,
+                    inputs:updatedInputPorts,
+                    output:{...gate.output,value:updatedOutputValue}
+                }
+            })
+        })
+       
        }
       
        canvasDrawerHandler()
@@ -297,8 +333,7 @@ const Study = () => {
     }
     useEffect(()=>{
       canvasDrawerHandler()
-      console.log('clicked input port ',selectedPort)
-      console.log('connection ',connections)
+    
     },[portNodes,gateNodes,selectedGate,selectedPort,connections])
   return (
     <div>
