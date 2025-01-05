@@ -241,7 +241,14 @@ const Study = () => {
         const startPort=selectedPort.type=="gate-input" && targetedPort
         const endPort=targetedPort.type=="input-port" && selectedPort
 
-        const hasConnections=connections.some(conn=>conn.start.id===selectedPort.id || conn.end.id===selectedPort.id)
+        const hasConnections=
+        connections.some(conn=>conn.start.id===selectedPort.id || conn.end.id===selectedPort.id) ||
+        connections.some(conn=>conn.start.id===targetedPort.id || conn.end.id===targetedPort.id)
+
+        const isInvalidConnection=(selectedPort?.id===targetedPort.id)
+   
+        if(isInvalidConnection) return 
+
         if(hasConnections) return
         if(startPort && endPort){
             setConnections(prevConn=>[
@@ -335,6 +342,7 @@ const Study = () => {
         return null
     }
     useEffect(()=>{
+        console.log(connections)
       canvasDrawerHandler()
     
     },[portNodes,gateNodes,selectedGate,selectedPort,connections])
