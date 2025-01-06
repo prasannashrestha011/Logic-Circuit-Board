@@ -76,7 +76,7 @@ export class GateCreator{
             type,
             width:40,
             height:60,
-            value:null
+            value:false
         }
         return port
     }
