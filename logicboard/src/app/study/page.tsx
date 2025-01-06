@@ -311,6 +311,46 @@ const Study = () => {
                 console.log("your gate type",gate.type)
                 const updatedOutputValue=computeGateOutput(gate.type,targetedInputNodes)
                 console.log("final output",updatedOutputValue)
+                      connections.forEach((conn) => {
+                              if (conn.start.id === gate.output.id) {
+                                const targetGate = gateNodes.find((g) =>
+                                  g.inputs.some((p) => p.id === conn.end.id)
+                                );
+                                if (targetGate) {
+                                  targetGate.inputs = targetGate.inputs.map((p) =>
+                                    p.id === conn.end.id
+                                      ? { ...p, value: updatedOutputValue }
+                                      : p
+                                  );
+                                  targetGate.output.value = computeGateOutput(
+                                    targetGate.type,
+                                    targetGate.inputs
+                                  );
+                                }
+                                console.log(updatedOutputValue, " is your idss")
+                              const finalOutputPort=portNodes.find((outputPort)=>{
+                                 return conn.end.id===outputPort.id
+                              })
+                              console.log("final output port",finalOutputPort)
+                              if(finalOutputPort){
+                             
+                                setPortNodes(prevOutputPort=>{
+                                  const updatedOutputPorts=prevOutputPort.map((port)=>{
+                                   if( port.id===finalOutputPort.id){
+                                    console.log("found final output port",port)
+                                     return {
+                                      ...port,
+                                      value:updatedOutputValue
+                                     }
+                                   }
+                                   return port
+                                  })
+                                  return updatedOutputPorts
+                                  
+                                })
+                              }
+                              }
+                            });
                 return {
                     ...gate,
                     inputs:targetedInputNodes,
