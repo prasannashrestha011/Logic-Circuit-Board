@@ -155,52 +155,44 @@ const Study = () => {
             }
         }
     }
-    const onTouchMove=(point:Point)=>{
-       
-        setSelectedGate(prevGate => {
+    const onTouchMove = (point:Point) => {
+        requestAnimationFrame(() => {
+          setSelectedGate(prevGate => {
             if (!prevGate) return null;
-    
-            // Update the position of the selected gate
-           const updatedGate=GateCreator.updateGatePosition(prevGate,point)
-        
-        
-            setConnections(prevConnection=>{
-                return updateGateConnectionsPosition(prevConnection,updatedGate)
-            })
-            
-            
-            // Update gateNodes with the modified gate
-            setGateNodes(prevGateNodes => 
-                prevGateNodes.map(gate =>
-                    gate.id === updatedGate.id ? updatedGate : gate
-                )
-            );
-    
-            return updatedGate; // Update selectedGate as well
-        });
-
-        if(isDraggingPort){
-            setSelectedPort(prevPort=>{
-                if(!prevPort) return null
-                const updatedPort=GateCreator.updatePortPosition(prevPort,point)
-    
-                setConnections(prevConn=>{
-                    return updatePortConnectionPosition(prevConn,updatedPort)
-                })
-                setPortNodes((prevPortNode) =>
-                    prevPortNode.map((port) => 
-                        port.id === updatedPort.id ? updatedPort : port
-                    )
-                );
-                
-                return updatedPort
-            })
-        }
-        if(!canvasRef.current || !selectedPort || !isDrawing) return 
-        DrawTempoLine(canvasRef.current,selectedPort.position,point,canvasDrawerHandler)
       
-        
-    }
+            const updatedGate = GateCreator.updateGatePosition(prevGate, point);
+      
+            // Update connections and gate nodes in a single batch
+            setConnections(prevConnection => updateGateConnectionsPosition(prevConnection, updatedGate));
+            setGateNodes(prevGateNodes => 
+              prevGateNodes.map(gate => (gate.id === updatedGate.id ? updatedGate : gate))
+            );
+      
+            return updatedGate;
+          });
+      
+          if (isDraggingPort) {
+            setSelectedPort(prevPort => {
+              if (!prevPort) return null;
+      
+              const updatedPort = GateCreator.updatePortPosition(prevPort, point);
+      
+              // Batch updates for connections and port nodes
+              setConnections(prevConn => updatePortConnectionPosition(prevConn, updatedPort));
+              setPortNodes(prevPortNode => 
+                prevPortNode.map(port => (port.id === updatedPort.id ? updatedPort : port))
+              );
+      
+              return updatedPort;
+            });
+          }
+      
+          if (canvasRef.current && selectedPort && isDrawing) {
+            DrawTempoLine(canvasRef.current, selectedPort.position, point, canvasDrawerHandler);
+          }
+        });
+      };
+      
 
     
     
@@ -385,7 +377,7 @@ const Study = () => {
         console.log(connections)
       canvasDrawerHandler()
     
-    },[portNodes,gateNodes,selectedGate,selectedPort,connections])
+    },[portNodes,gateNodes,selectedGate,selectedPort])
   return (
     <div>
         <div className='flex gap-3'>
